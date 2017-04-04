@@ -2,15 +2,15 @@
 // $HeadURL$
 // $Id$
 
-// This program is free software: you can redistribute it and/or modify it under the terms of the 
-// GNU General Public License as published by the Free Software Foundation, either version 3 of the 
+// This program is free software: you can redistribute it and/or modify it under the terms of the
+// GNU General Public License as published by the Free Software Foundation, either version 3 of the
 // License, or (at your option) any later version.
-// 
-// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See 
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
 // the GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License along with this program.  If 
+//
+// You should have received a copy of the GNU General Public License along with this program.  If
 // not, see <http://www.gnu.org/licenses/>.
 
 /// \file
@@ -71,16 +71,16 @@ namespace bitstream {
 
 		// handle the generic bitstream header
 		} else {
-			os << "Design " << rhs.mDesignName << " (" << rhs.mDeviceName << ") @ " 
-			<< rhs.mDesignDate << " " << rhs.mDesignTime << ": " << rhs.mBitstreamByteLength 
+			os << "Design " << rhs.mDesignName << " (" << rhs.mDeviceName << ") @ "
+			<< rhs.mDesignDate << " " << rhs.mDesignTime << ": " << rhs.mBitstreamByteLength
 			<< " bytes (" << (rhs.mBitstreamByteLength >> 2) << " words)";
 		}
 		return os;
 	}
 
 	std::ostream& operator <<(std::ostream& os, const Spartan6Bitstream& rhs) {
-		return os << "Design " << rhs.mDesignName << " (" << rhs.mDeviceName << ") @ " 
-			<< rhs.mDesignDate << " " << rhs.mDesignTime << ": " << rhs.mBitstreamByteLength 
+		return os << "Design " << rhs.mDesignName << " (" << rhs.mDeviceName << ") @ "
+			<< rhs.mDesignDate << " " << rhs.mDesignTime << ": " << rhs.mBitstreamByteLength
 			<< " bytes (" << (rhs.mBitstreamByteLength >> 1) << " words)";
 	}
 
@@ -121,7 +121,7 @@ namespace bitstream {
 			// handle reserved packets
 			} else if(packet.isReserved()) {
 				os << Spartan3E::sOpcodeName[packet.getOpcode()] << std::endl;
-			
+
 			// handle NOP packets
 			} else if(packet.isNop()) {
 				int nops = 1;
@@ -141,12 +141,12 @@ namespace bitstream {
 				// account for the packet type
 				os << Spartan3E::sPacketTypeName[type];
 				switch(type) {
-				case Spartan3E::ePacketType1: 
+				case Spartan3E::ePacketType1:
 					address = Spartan3E::ERegister(packet.getAddress());
 					break;
-				case Spartan3E::ePacketType2: 
+				case Spartan3E::ePacketType2:
 					break;
-				default: 
+				default:
 					os << std::endl;
 					continue;
 				}
@@ -165,12 +165,12 @@ namespace bitstream {
 						if(wordCount == 0) break;
 						// include the Auto CRC information
 						os << std::endl << "    ";
-						os << Hex32(rhs.getHeaderByteLength() + (cumulativeWordLength << 2)) 
+						os << Hex32(rhs.getHeaderByteLength() + (cumulativeWordLength << 2))
 							<< ": Auto CRC: " << Hex16(p->getHeader());
 						cumulativeWordLength += 1;
 						p++;
 						break;
-					case Spartan3E::eRegisterCMD: 
+					case Spartan3E::eRegisterCMD:
 						os << " " << Spartan3E::sCommandName[word];
 						break;
 					case Spartan3E::eRegisterCOR:
@@ -254,7 +254,7 @@ namespace bitstream {
 			// handle reserved packets
 			} else if(packet.isReserved()) {
 				os << Spartan6::sOpcodeName[packet.getOpcode()] << std::endl;
-			
+
 			// handle NOP packets
 			} else if(packet.isNop()) {
 				int nops = 1;
@@ -275,11 +275,11 @@ namespace bitstream {
 				// account for the packet type
 				os << Spartan6::sPacketTypeName[type];
 				switch(type) {
-				case Spartan6::ePacketType1: 
-				case Spartan6::ePacketType2: 
+				case Spartan6::ePacketType1:
+				case Spartan6::ePacketType2:
 					address = Spartan6::ERegister(packet.getAddress());
 					break;
-				default: 
+				default:
 					os << std::endl;
 					continue;
 				}
@@ -293,7 +293,7 @@ namespace bitstream {
 					os << " WRITE " << Spartan6::sRegisterName[address];
 					// process according to register address
 					switch(address) {
-					case Spartan6::eRegisterCMD: 
+					case Spartan6::eRegisterCMD:
 						os << " " << Spartan6::sCommandName[word];
 						break;
 					case Spartan6::eRegisterCOR1:
@@ -350,19 +350,19 @@ namespace bitstream {
 						if(wordCount == 0) break;
 						// include the Auto CRC information
 						os << std::endl << "    ";
-						os << Hex32(rhs.getHeaderByteLength() + (cumulativeWordLength << 1)) 
+						os << Hex32(rhs.getHeaderByteLength() + (cumulativeWordLength << 1))
 							<< ": Auto CRC: " << Hex32((uint32_t((*p)[0]) << 16) | (*p)[1]);
 						cumulativeWordLength += 2;
 						p++;
 						break;
 					case Spartan6::eRegisterFARMAJ:
 						// Only updates the FAR Major
-						if(wordCount == 1) 
+						if(wordCount == 1)
 							os << ": " << Hex16(packet[1]);
 						// Updates both the FAR Major and Minor address
 						// Word 1: FAR Major
 						// Word 2: FAR Minor
-						else if(wordCount == 2) 
+						else if(wordCount == 2)
 							os << ": " << Hex32((uint32_t(packet[1]) << 16) | packet[2]);
 						break;
 					default:
@@ -421,7 +421,7 @@ namespace bitstream {
 			// handle reserved packets
 			} else if(packet.isReserved()) {
 				os << Virtex::sOpcodeName[packet.getOpcode()] << std::endl;
-			
+
 			/* Not used in Virtex
 			// handle NOP packets
 			} else if(packet.isNop()) {
@@ -443,12 +443,12 @@ namespace bitstream {
 				// account for the packet type
 				os << Virtex::sPacketTypeName[type];
 				switch(type) {
-				case Virtex::ePacketType1: 
+				case Virtex::ePacketType1:
 					address = Virtex::ERegister(packet.getAddress());
 					break;
-				case Virtex::ePacketType2: 
+				case Virtex::ePacketType2:
 					break;
-				default: 
+				default:
 					os << std::endl;
 					continue;
 				}
@@ -465,7 +465,7 @@ namespace bitstream {
 					case Virtex::eRegisterFDRI:
 						os << ": " << Hex32(wordCount) << " words";
 						break;
-					case Virtex::eRegisterCMD: 
+					case Virtex::eRegisterCMD:
 						os << " " << Virtex::sCommandName[word];
 						break;
 					case Virtex::eRegisterCOR:
@@ -568,12 +568,12 @@ namespace bitstream {
 				// account for the packet type
 				os << Virtex2::sPacketTypeName[type];
 				switch(type) {
-				case Virtex2::ePacketType1: 
+				case Virtex2::ePacketType1:
 					address = Virtex2::ERegister(packet.getAddress());
 					break;
-				case Virtex2::ePacketType2: 
+				case Virtex2::ePacketType2:
 					break;
-				default: 
+				default:
 					os << std::endl;
 					continue;
 				}
@@ -592,12 +592,12 @@ namespace bitstream {
 						if(wordCount == 0) break;
 						// include the Auto CRC information
 						os << std::endl << "    ";
-						os << Hex32(rhs.getHeaderByteLength() + (cumulativeWordLength << 2)) 
+						os << Hex32(rhs.getHeaderByteLength() + (cumulativeWordLength << 2))
 							<< ": Auto CRC: " << Hex16(p->getHeader());
 						cumulativeWordLength += 1;
 						p++;
 						break;
-					case Virtex2::eRegisterCMD: 
+					case Virtex2::eRegisterCMD:
 						os << " " << Virtex2::sCommandName[word];
 						break;
 					case Virtex2::eRegisterCOR:
@@ -706,12 +706,12 @@ namespace bitstream {
 				// account for the packet type
 				os << Virtex4::sPacketTypeName[type];
 				switch(type) {
-				case Virtex4::ePacketType1: 
+				case Virtex4::ePacketType1:
 					address = Virtex4::ERegister(packet.getAddress());
 					break;
-				case Virtex4::ePacketType2: 
+				case Virtex4::ePacketType2:
 					break;
-				default: 
+				default:
 					os << std::endl;
 					continue;
 				}
@@ -728,7 +728,7 @@ namespace bitstream {
 					case Virtex4::eRegisterFDRI:
 						os << ": " << Hex32(wordCount) << " words";
 						break;
-					case Virtex4::eRegisterCMD: 
+					case Virtex4::eRegisterCMD:
 						os << " " << Virtex4::sCommandName[word];
 						break;
 					case Virtex4::eRegisterCOR:
@@ -855,12 +855,12 @@ namespace bitstream {
 				// account for the packet type
 				os << Virtex5::sPacketTypeName[type];
 				switch(type) {
-				case Virtex5::ePacketType1: 
+				case Virtex5::ePacketType1:
 					address = Virtex5::ERegister(packet.getAddress());
 					break;
-				case Virtex5::ePacketType2: 
+				case Virtex5::ePacketType2:
 					break;
-				default: 
+				default:
 					os << std::endl;
 					continue;
 				}
@@ -877,7 +877,7 @@ namespace bitstream {
 					case Virtex5::eRegisterFDRI:
 						os << ": " << Hex32(wordCount) << " words";
 						break;
-					case Virtex5::eRegisterCMD: 
+					case Virtex5::eRegisterCMD:
 						os << " " << Virtex5::sCommandName[word];
 						break;
 					case Virtex5::eRegisterCOR0:
@@ -902,11 +902,11 @@ namespace bitstream {
 						break;
 					case Virtex5::eRegisterMASK:
 						os << ": " << Hex32(word);
-						// we need to snoop the next packet, because the documented mask subfields 
+						// we need to snoop the next packet, because the documented mask subfields
 						// apply to CTL0 only, and not to CTL1 which is completely undefined
 						if(p < e) {
 							const VirtexPacket& nextPacket = *p;
-							if(nextPacket.isType1() && nextPacket.isWrite() 
+							if(nextPacket.isType1() && nextPacket.isWrite()
 								&& nextPacket.getAddress() == Virtex5::eRegisterCTL1) {
 								os << " ()";
 								break;
@@ -1031,12 +1031,12 @@ namespace bitstream {
 				// account for the packet type
 				os << Virtex6::sPacketTypeName[type];
 				switch(type) {
-				case Virtex6::ePacketType1: 
+				case Virtex6::ePacketType1:
 					address = Virtex6::ERegister(packet.getAddress());
 					break;
-				case Virtex6::ePacketType2: 
+				case Virtex6::ePacketType2:
 					break;
-				default: 
+				default:
 					os << std::endl;
 					continue;
 				}
@@ -1053,7 +1053,7 @@ namespace bitstream {
 					case Virtex6::eRegisterFDRI:
 						os << ": " << Hex32(wordCount) << " words";
 						break;
-					case Virtex6::eRegisterCMD: 
+					case Virtex6::eRegisterCMD:
 						os << " " << Virtex6::sCommandName[word];
 						break;
 					case Virtex6::eRegisterCOR0:
@@ -1078,11 +1078,11 @@ namespace bitstream {
 						break;
 					case Virtex6::eRegisterMASK:
 						os << ": " << Hex32(word);
-						// we need to snoop the next packet, because the documented mask subfields 
+						// we need to snoop the next packet, because the documented mask subfields
 						// apply to CTL0 only, and not to CTL1 which is completely undefined
 						if(p < e) {
 							const VirtexPacket& nextPacket = *p;
-							if(nextPacket.isType1() && nextPacket.isWrite() 
+							if(nextPacket.isType1() && nextPacket.isWrite()
 								&& nextPacket.getAddress() == Virtex6::eRegisterCTL1) {
 								os << " ()";
 								break;
@@ -1207,12 +1207,12 @@ namespace bitstream {
 				// account for the packet type
 				os << Virtex7::sPacketTypeName[type];
 				switch(type) {
-				case Virtex7::ePacketType1: 
+				case Virtex7::ePacketType1:
 					address = Virtex7::ERegister(packet.getAddress());
 					break;
-				case Virtex7::ePacketType2: 
+				case Virtex7::ePacketType2:
 					break;
-				default: 
+				default:
 					os << std::endl;
 					continue;
 				}
@@ -1227,9 +1227,18 @@ namespace bitstream {
 					// process according to register address
 					switch(address) {
 					case Virtex7::eRegisterFDRI:
-						os << ": " << Hex32(wordCount) << " words";
+						os << ": " << Hex32(wordCount) << " words" << std::endl;
+                                                os << "   Data: ";
+
+                                                for (std::size_t i = 1; i < packet.getWordSize(); ++i)
+                                                {
+                                                    os << std::hex << std::setfill('0') << std::setw(8) << packet[i] << " ";
+						    if (i % 10 == 9) {
+							os << std::endl;
+						    }
+                                                }
 						break;
-					case Virtex7::eRegisterCMD: 
+					case Virtex7::eRegisterCMD:
 						os << " " << Virtex7::sCommandName[word];
 						break;
 					case Virtex7::eRegisterCOR0:
@@ -1254,11 +1263,11 @@ namespace bitstream {
 						break;
 					case Virtex7::eRegisterMASK:
 						os << ": " << Hex32(word);
-						// we need to snoop the next packet, because the documented mask subfields 
+						// we need to snoop the next packet, because the documented mask subfields
 						// apply to CTL0 only, and not to CTL1 which is completely undefined
 						if(p < e) {
 							const VirtexPacket& nextPacket = *p;
-							if(nextPacket.isType1() && nextPacket.isWrite() 
+							if(nextPacket.isType1() && nextPacket.isWrite()
 								&& nextPacket.getAddress() == Virtex7::eRegisterCTL1) {
 								os << " ()";
 								break;

@@ -54,7 +54,7 @@ TORC_LIB_DIR_OPTION = -L$(SRC_DIR)
 # Default C++ Flags - Use EXTRA_CCFLAGS to special flags
 CCFLAGS = \
 	-x c++ \
-	-g \
+	-g -O0 \
 	-Wall \
 	-Werror \
 	$(TORC_INCLUDE_DIR_OPTION) \

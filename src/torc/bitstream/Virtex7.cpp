@@ -2,15 +2,15 @@
 // $HeadURL$
 // $Id$
 
-// This program is free software: you can redistribute it and/or modify it under the terms of the 
-// GNU General Public License as published by the Free Software Foundation, either version 3 of the 
+// This program is free software: you can redistribute it and/or modify it under the terms of the
+// GNU General Public License as published by the Free Software Foundation, either version 3 of the
 // License, or (at your option) any later version.
-// 
-// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See 
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
 // the GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License along with this program.  If 
+//
+// You should have received a copy of the GNU General Public License along with this program.  If
 // not, see <http://www.gnu.org/licenses/>.
 
 #include "torc/bitstream/Virtex7.hpp"
@@ -27,7 +27,7 @@ namespace torc {
 namespace bitstream{
 
 	const char* Virtex7::sPacketTypeName[ePacketTypeCount] = {
-		"[UNKNOWN TYPE 0]", "TYPE1", "TYPE2", "[UNKNOWN TYPE 3]", "[UNKNOWN TYPE 4]", 
+		"[UNKNOWN TYPE 0]", "TYPE1", "TYPE2", "[UNKNOWN TYPE 3]", "[UNKNOWN TYPE 4]",
 		"[UNKNOWN TYPE 5]", "[UNKNOWN TYPE 6]", "[UNKNOWN TYPE 7]"
 	};
 
@@ -36,15 +36,15 @@ namespace bitstream{
 	};
 
 	const char* Virtex7::sRegisterName[eRegisterCount] = {
-		"CRC", "FAR", "FDRI", "FDRO", "CMD", "CTL0", "MASK", "STAT", "LOUT", "COR0", 
+		"CRC", "FAR", "FDRI", "FDRO", "CMD", "CTL0", "MASK", "STAT", "LOUT", "COR0",
 		"MFWR", "CBC", "IDCODE", "AXSS", "COR1", "[UNKNOWN REG 15]","WBSTAR", "TIMER",
-		"[UNKNOWN REG 18]","[UNKNOWN REG 19]", "[UNKNOWN REG 20]", "[UNKNOWN REG 21]", 
+		"[UNKNOWN REG 18]","[UNKNOWN REG 19]", "[UNKNOWN REG 20]", "[UNKNOWN REG 21]",
 		"BOOTSTS", "[UNKNOWN REG 23]", "CTL1"
 	};
 
 	const char* Virtex7::sCommandName[eCommandCount] = {
-		"NULL", "WCFG", "MFW", "DGHIGH/LFRM", "RCFG", "START", "RCAP", "RCRC", 
-		"AGHIGH", "SWITCH", "GRESTORE", "SHUTDOWN", "GCAPTURE", "DESYNCH", "Reserved", 
+		"NULL", "WCFG", "MFW", "DGHIGH/LFRM", "RCFG", "START", "RCAP", "RCRC",
+		"AGHIGH", "SWITCH", "GRESTORE", "SHUTDOWN", "GCAPTURE", "DESYNCH", "Reserved",
 		"IPROG", "CRCC", "LTIMER"
 	};
 
@@ -60,50 +60,50 @@ namespace bitstream{
 			// bitgen: No, Yes
 			// config: 0:"No (default)", 1:"Yes"
 			VALUES{"No", "Yes", 0}},
-		{0x00000030,  4, "Security", "SBITS", 0, 
+		{0x00000030,  4, "Security", "SBITS", 0,
 			// bitgen: None, Level1, Level2
-			// config: 00:"Read/Write OK (default)", 01:"Readback disabled", 1x:"Both writes and 
+			// config: 00:"Read/Write OK (default)", 01:"Readback disabled", 1x:"Both writes and
 			//		read disabled."
 			VALUES{"None", "Level1", "Level2", "Level2", 0}},
-		{0x00000040,  6, "Encrypt", "DEC", 0, 
+		{0x00000040,  6, "Encrypt", "DEC", 0,
 			// bitgen: No, Yes
 			// config: AES Decryptor enable bit
 			VALUES{"No", "Yes", 0}},
-		{0x00000080,  7, "FARSRC", "FARSRC", 0, 
+		{0x00000080,  7, "FARSRC", "FARSRC", 0,
 			// bitgen: n/a
 			// config: 0: FAR, address of RBCRC, 1: EFAR, address of ECC error frame
 			VALUES{"FAR", "EFAR", 0}},
-		{0x00000100,  8, "GLUTMASK", "GLUTMASK", 0, 
+		{0x00000100,  8, "GLUTMASK", "GLUTMASK", 0,
 			// bitgen: n/a
-			// config: 0:"Readback all 0s from SRL16 and Distributed RAM. Use with active device 
-			//		readback.", 1:"Readback dynamic values from SRL16 and Distributed RAM. Use with 
+			// config: 0:"Readback all 0s from SRL16 and Distributed RAM. Use with active device
+			//		readback.", 1:"Readback dynamic values from SRL16 and Distributed RAM. Use with
 			//		shutdown readback."
 			VALUES{"Masked", "Dynamic", 0}},
-		{0x00001000, 12, "OverTempPowerDown", "OverTempPowerDown", 0, 
+		{0x00001000, 12, "OverTempPowerDown", "OverTempPowerDown", 0,
 			// bitgen: Disable, Enable
 			// config: Enables the System Monitor Over-Temperature power down.
 			VALUES{"Disable", "Enable", 0}},
-		{0x40000000, 30, "ICAP_sel", "ICAP_SEL", 0, 
+		{0x40000000, 30, "ICAP_sel", "ICAP_SEL", 0,
 			// bitgen: n/a
 			// config: 0:"Top ICAP Port Enabled (default)", 1:"Bottom ICAP Port Enabled"
 			VALUES{"Top", "Bottom", 0}},
-		{0x80000000, 31, "EFUSE_key", "EFUSE_KEY", 0, 
+		{0x80000000, 31, "EFUSE_key", "EFUSE_KEY", 0,
 			// bitgen: n/a
 			// config: 0:"Battery-back RAM", 1:"eFUSE"
 			VALUES{"No", "Yes", 0}},
 		{0, 0, 0, 0, 0, 0}
-	}; 
+	};
 
 	/// \see Control Register 0 (CTL0): UG470, v1.1, March 28, 2011, Table 5-22.
 	const Bitstream::Subfield Virtex7::sMASK0[] = {
 		{0x00000001,  0, "GTS_USER_B", "GTS_USER_B", 0, VALUES{"Protected", "Writable", 0}},
 		{0x00000008,  3, "Persist", "PERSIST", 0,  VALUES{"Protected", "Writable", 0}},
-		{0x00000030,  4, "Security", "SBITS", 0, 
+		{0x00000030,  4, "Security", "SBITS", 0,
 			VALUES{"Protected", "[UNKNOWN 1]", "[UNKNOWN 2]", "Writable", 0}},
 		{0x00000040,  6, "Encrypt", "DEC", 0,  VALUES{"Protected", "Writable", 0}},
 		{0x00000080,  7, "FARSRC", "FARSRC", 0,  VALUES{"Protected", "Writable", 0}},
 		{0x00000100,  8, "GLUTMASK", "GLUTMASK", 0,  VALUES{"Protected", "Writable", 0}},
-		{0x00001000, 12, "OverTempPowerDown", "OverTempPowerDown", 0, 
+		{0x00001000, 12, "OverTempPowerDown", "OverTempPowerDown", 0,
 			VALUES{"Protected", "Writable", 0}},
 		{0x40000000, 30, "ICAP_sel", "ICAP_SEL", 0, VALUES{"Protected", "Writable", 0}},
 		{0x80000000, 31, "EFUSE_key", "EFUSE_KEY", 0, VALUES{"Protected", "Writable", 0}},
@@ -120,13 +120,13 @@ namespace bitstream{
 	const Bitstream::Subfield Virtex7::sCOR0[] = {
 		{0x00000007,  0, "GWE_cycle", "GWE_CYCLE", 5,
 			// bitgen: 6, 1, 2, 3, 4, 5, Done, Keep
-			// config: 000:"1", 001:"2", 010:"3", 011:"4", 100:"5", 101:"6", 110:"GTS tracks DONE 
+			// config: 000:"1", 001:"2", 010:"3", 011:"4", 100:"5", 101:"6", 110:"GTS tracks DONE
 			//		pin.  BitGen option -g GTS_cycle:Done", 111:"Keep"
 			VALUES{"1", "2", "3", "4", "5", "6", "Done", "Keep", 0}},
 		{0x00000038,  3, "GTS_cycle", "GTS_CYCLE", 4,
 			// bitgen: 5, 1, 2, 3, 4, 6, Done, Keep
-			// config: 000:"1", 001:"2", 010:"3", 011:"4", 100:"5", 101:"6", 110:"GTS tracks DONE 
-			//		pin.  BitGen option -g GTS_cycle:Done", 001:"Keep" 
+			// config: 000:"1", 001:"2", 010:"3", 011:"4", 100:"5", 101:"6", 110:"GTS tracks DONE
+			//		pin.  BitGen option -g GTS_cycle:Done", 001:"Keep"
 			VALUES{"1", "2", "3", "4", "5", "6", "Done", "Keep", 0}},
 		{0x000001C0, 6, "LCK_cycle", "LOCK_CYCLE", 0,
 			// bitgen: NoWait, 0, 1, 2, 3, 4, 5, 6
@@ -148,14 +148,14 @@ namespace bitstream{
 			// bitgen: 2, 4, 6, 10, 12, 16, 22, 26, 33, 40, 50, 66
 			// config: values undefined
 			VALUES{
-				"[UNKNOWN 0]", "[UNKNOWN 1]", "[UNKNOWN 2]", "[UNKNOWN 3]", 
-				"[UNKNOWN 4]", "[UNKNOWN 5]", "[UNKNOWN 6]", "[UNKNOWN 7]", 
-				"[UNKNOWN 8]", "[UNKNOWN 9]", "[UNKNOWN 10]", "[UNKNOWN 11]", 
-				"[UNKNOWN 12]", "[UNKNOWN 13]", "[UNKNOWN 14]", "[UNKNOWN 15]", 
-				"[UNKNOWN 16]", "[UNKNOWN 17]", "[UNKNOWN 18]", "[UNKNOWN 19]", 
-				"[UNKNOWN 20]", "[UNKNOWN 21]", "[UNKNOWN 22]", "[UNKNOWN 23]", 
-				"[UNKNOWN 24]", "[UNKNOWN 25]", "[UNKNOWN 26]", "[UNKNOWN 27]", 
-				"[UNKNOWN 28]", "[UNKNOWN 29]", "[UNKNOWN 30]", "[UNKNOWN 31]", 
+				"[UNKNOWN 0]", "[UNKNOWN 1]", "[UNKNOWN 2]", "[UNKNOWN 3]",
+				"[UNKNOWN 4]", "[UNKNOWN 5]", "[UNKNOWN 6]", "[UNKNOWN 7]",
+				"[UNKNOWN 8]", "[UNKNOWN 9]", "[UNKNOWN 10]", "[UNKNOWN 11]",
+				"[UNKNOWN 12]", "[UNKNOWN 13]", "[UNKNOWN 14]", "[UNKNOWN 15]",
+				"[UNKNOWN 16]", "[UNKNOWN 17]", "[UNKNOWN 18]", "[UNKNOWN 19]",
+				"[UNKNOWN 20]", "[UNKNOWN 21]", "[UNKNOWN 22]", "[UNKNOWN 23]",
+				"[UNKNOWN 24]", "[UNKNOWN 25]", "[UNKNOWN 26]", "[UNKNOWN 27]",
+				"[UNKNOWN 28]", "[UNKNOWN 29]", "[UNKNOWN 30]", "[UNKNOWN 31]",
 				0}},
 		{0x00800000, 23, "Capture", "SINGLE", 0,
 			// bitgen: n/a -- this comes from the CAPTURE site ONESHOT setting
@@ -187,7 +187,7 @@ namespace bitstream{
 			// config: 00:"1", 01:"2", 10:"3", 11:"4"
 			VALUES{"1", "2", "3", "4", 0}},
 			//VALUES{"1", "4", "8", "Reserved", 0}}, // WHY ?!
-		{0x00000100,  8, "ContinuousReadbackCRC", "RBCRC_EN", 0, 
+		{0x00000100,  8, "ContinuousReadbackCRC", "RBCRC_EN", 0,
 			// bitgen: n/a?
 			// config: Continuous readback CRC enable
 			VALUES{"Enabled", "disabled", 0}},
@@ -283,74 +283,74 @@ namespace bitstream{
 		{0x00000001,  0, "CRC_error", "CRC_ERROR", 0,
 			// bitgen: n/a
 			// config: 0:"No CRC error", 1:"CRC error"
-			VALUES{"No", "Yes", 0}},	
-		{0x00000002,  1, "DecryptorSecuritySet", "PART_SECURED", 0, 
+			VALUES{"No", "Yes", 0}},
+		{0x00000002,  1, "DecryptorSecuritySet", "PART_SECURED", 0,
 			// bitgen: n/a
 			// config: 0:"Decryptor security not set", 1:"Decryptor security set"
 			VALUES{"No", "Yes", 0}},
-		{0x00000004,  2, "MMCM_locked", "MMCM_LOCK", 0, 
+		{0x00000004,  2, "MMCM_locked", "MMCM_LOCK", 0,
 			// bitgen: n/a
 			// config: 0:"MMCMs not locked", 1:"MMCMs are locked"
 			VALUES{"No", "Yes", 0}},
-		{0x00000008,  3, "DCI_matched", "DCI_MATCH", 0, 
+		{0x00000008,  3, "DCI_matched", "DCI_MATCH", 0,
 			// bitgen: n/a
 			// config: 0:"DCI not matched", 1:"DCI matched
 			VALUES{"No", "Yes", 0}},
-		{0x00000010,  4, "StartupFinished", "EOS", 0, 
+		{0x00000010,  4, "StartupFinished", "EOS", 0,
 			// bitgen: n/a
 			// config: 0:"Startup sequence has not finished", 1:"Startup sequence has finished"
 			VALUES{"No", "Yes", 0}},
-		{0x00000020,  5, "GTS_CFG_B", "GTS_CFG_B", 0, 
+		{0x00000020,  5, "GTS_CFG_B", "GTS_CFG_B", 0,
 			// bitgen: n/a
 			// config: 0:"All I/Os are placed in high-Z state", 1:"All I/Os behave as configured"
 			VALUES{"IoDisabled", "IoEnabled", 0}},
-		{0x00000040,  6, "GWE", "GWE", 0, 
+		{0x00000040,  6, "GWE", "GWE", 0,
 			// bitgen: n/a
-			// config: 0:"FFs and block RAM are write disabled", 1:"FFs and block RAM are write 
+			// config: 0:"FFs and block RAM are write disabled", 1:"FFs and block RAM are write
 			//		enabled"
 			VALUES{"WriteDisabled", "WriteEnabled", 0}},
-		{0x00000080,  7, "GHIGH_B", "GHIGH_B", 0, 
+		{0x00000080,  7, "GHIGH_B", "GHIGH_B", 0,
 			// bitgen: n/a
 			// config: 0:"GHIGH_B asserted", 1:"GHIGH_B deasserted"
 			VALUES{"InterconnectDisabled", "InterconnectEnabled", 0}},
-		{0x00000700,  8, "Mode", "MODE", 0, 
+		{0x00000700,  8, "Mode", "MODE", 0,
 			// bitgen: n/a
 			// config: Status of the MODE pins (M2:M0)
-			VALUES{"MasterSerial", "MasterSPI", "MasterBPI-Up", "MasterBPI-Down", 
+			VALUES{"MasterSerial", "MasterSPI", "MasterBPI-Up", "MasterBPI-Down",
 				"MasterSelectMap", "JTAG", "SlaveSelectMap", "SlaveSerial", 0}},
-		{0x00000800, 11, "INIT_complete", "INIT_COMPLETE", 0, 
+		{0x00000800, 11, "INIT_complete", "INIT_COMPLETE", 0,
 			// bitgen: n/a
 			// config: 0:"Initializations has not finished", 1:"Initialization finished"
 			VALUES{"No", "Yes", 0}},
-		{0x00000800, 11, "INIT_complete", "INIT_COMPLETE", 0, 
+		{0x00000800, 11, "INIT_complete", "INIT_COMPLETE", 0,
 			// bitgen: n/a
 			// config: 0:"Initializations has not finished", 1:"Initialization finished"
 			VALUES{"No", "Yes", 0}},
-		{0x00001000, 12, "INIT_B", "INIT_B", 0, 
+		{0x00001000, 12, "INIT_B", "INIT_B", 0,
 			// bitgen: n/a
 			// config: Value on INIT_B pin
 			VALUES{"Deasserted", "Asserted", 0}},
-		{0x00002000, 13, "DONE_released", "RELEASE_DONE", 0, 
+		{0x00002000, 13, "DONE_released", "RELEASE_DONE", 0,
 			// bitgen: n/a
 			// config: 0:"DONE signal not released", 1:"DONE signal released"
 			VALUES{"DrivenLow", "Released", 0}},
-		{0x00004000, 14, "DONE", "DONE", 0, 
+		{0x00004000, 14, "DONE", "DONE", 0,
 			// bitgen: n/a
 			// config: Value on DONE pin
 			VALUES{"NotDone", "Done", 0}},
-		{0x00008000, 15, "ID_error", "ID_ERROR", 0, 
+		{0x00008000, 15, "ID_error", "ID_ERROR", 0,
 			// bitgen: n/a
 			// config: 0:"No IE_ERROR", 1:"ID_ERROR"
 			VALUES{"NoError", "Error", 0}},
-		{0x00010000, 16, "Decrypt_error", "DEC_ERROR", 0, 
+		{0x00010000, 16, "Decrypt_error", "DEC_ERROR", 0,
 			// bitgen: n/a
 			// config: 0:"No DEC_ERROR", 1:"DEC_ERROR"
 			VALUES{"NoError", "Error", 0}},
-		{0x001c0000, 18, "StartupState", "STARTUP_STATE", 0, 
+		{0x001c0000, 18, "StartupState", "STARTUP_STATE", 0,
 			// bitgen: n/a
 			// config: 000:"0", 001:"1", 010:"3", 011:"2", 100:"7", 101:"6", 110:"4", 111:"5"
 			VALUES{"0", "1", "3", "2", "7", "6", "4", "5", 0}},
-		{0x06000000, 25, "BusWidth", "BUS_WIDTH", 0, 
+		{0x06000000, 25, "BusWidth", "BUS_WIDTH", 0,
 			// bitgen: n/a
 			// config: 00:"x1", 01:"x8", 10:"x16", 11:"x32"
 			VALUES{"1", "8", "16", "32", 0}},
@@ -358,7 +358,7 @@ namespace bitstream{
 	};
 
 	/// \brief Return the masked value for a subfield of the specified register.
-	uint32_t Virtex7::makeSubfield(ERegister inRegister, const std::string& inSubfield, 
+	uint32_t Virtex7::makeSubfield(ERegister inRegister, const std::string& inSubfield,
 		const std::string& inSetting) {
 		const Subfield* subfields;
 		switch(inRegister) {
@@ -373,15 +373,15 @@ namespace bitstream{
 			case eRegisterBOOTSTS: subfields = sBOOTSTS; break;
 			default: return 0;
 		}
-		for(uint32_t field = 0; subfields[field].mMask != 0; field++){ 
-			const Subfield& subfield = subfields[field]; 
+		for(uint32_t field = 0; subfields[field].mMask != 0; field++){
+			const Subfield& subfield = subfields[field];
 			if(inSubfield != subfield.mBitgenName && inSubfield != subfield.mConfigGuideName)
-				continue; 
-			const char** ptr = subfield.mValues; 
+				continue;
+			const char** ptr = subfield.mValues;
 			for(uint32_t i = 0; *ptr != 0; i++, ptr++){
-				if(inSetting == *ptr) return (i << subfield.mShift) & subfield.mMask; 
+				if(inSetting == *ptr) return (i << subfield.mShift) & subfield.mMask;
 			}
-		} 
+		}
 		return 0;
 	}
 
@@ -462,7 +462,7 @@ namespace bitstream{
 //		std::cerr << "========== ColumnDefs ==========" << std::endl;
 //		while(p < e) {
 //			ColumnDef& columnDef = *p++;
-//			std::cerr << columnDef.getName() << ": " 
+//			std::cerr << columnDef.getName() << ": "
 //				<< columnDef[0] << ", " << columnDef[1] << ", " << columnDef[2] << ", "
 //				<< columnDef[3] << ", " << columnDef[4] << ", " << columnDef[5] << ", "
 //				<< columnDef[6] << ", " << columnDef[7] << std::endl;
@@ -470,7 +470,7 @@ namespace bitstream{
 //		std::cerr << "================================" << std::endl;
 
 		// clear variables before starting
-		// this is in part important because the various 7-Series families do not share the same 
+		// this is in part important because the various 7-Series families do not share the same
 		// family databases, and consequently may have different mTileTypeIndexToColumnType mappings
 		mFrameRowCount = mTopRowCount = mBottomRowCount = 0;
 		mFrameIndexToAddress.clear();
@@ -507,7 +507,7 @@ namespace bitstream{
 			TileTypeNameToColumnType::iterator ttwe = mTileTypeNameToColumnType.end();
 			if(ttwp != ttwe) mTileTypeIndexToColumnType[tileTypeIndex] = EColumnType(ttwp->second);
 //if(ttwp != ttwe) {
-//	std::cout << "Tile type index " << tileTypeIndex << "\tmapped " << tileTypeName 
+//	std::cout << "Tile type index " << tileTypeIndex << "\tmapped " << tileTypeName
 //		<< " to " << ttwp->second << std::endl;
 //}
 		}
@@ -546,7 +546,7 @@ namespace bitstream{
 					// iterate over the XDL rows within the frame row
 					for(int rowOffset = 0; rowOffset < eClockRegionRows; rowOffset++, xdlRow++) {
 						// look up the tile info
-						const torc::architecture::TileInfo& tileInfo 
+						const torc::architecture::TileInfo& tileInfo
 							= tiles.getTileInfo(tiles.getTileIndex(xdlRow, xdlCol));
 						TileTypeIndex tileTypeIndex = tileInfo.getTypeIndex();
 						// determine whether the tile type widths are defined
@@ -625,10 +625,10 @@ namespace bitstream{
 									break;
 								}
 							}
-//std::cout << "" << (topBottom == eFarTop ? "top" : "bottom") << ", far row: " << farRow 
-//	<< ", xdl column: " << xdlCol << " (" << baseCol + xdlCol << "), bit column: " 
+//std::cout << "" << (topBottom == eFarTop ? "top" : "bottom") << ", far row: " << farRow
+//	<< ", xdl column: " << xdlCol << " (" << baseCol + xdlCol << "), bit column: "
 //	<< bitCol << ", xdl base row: " << xdlBaseRow;
-							//std::cout << "	" << tiles.getTileTypeName(tileInfo.getTypeIndex()) 
+							//std::cout << "	" << tiles.getTileTypeName(tileInfo.getTypeIndex())
 							//	<< std::endl;
 							columnTypes[baseCol + xdlCol] = static_cast<EColumnType>(ttwp->second);
 							bitCol++;
@@ -646,7 +646,7 @@ namespace bitstream{
 		std::fstream tilemapStream(generatedMap.string().c_str(), std::ios::out);
 		for(TileRow row; row < rowCount; row++) {
 			for(TileCol col; col < colCount; col++) {
-				const torc::architecture::TileInfo& tileInfo 
+				const torc::architecture::TileInfo& tileInfo
 					= tiles.getTileInfo(tiles.getTileIndex(row, col));
 				TileTypeIndex tileTypeIndex = tileInfo.getTypeIndex();
 				tilemapStream << tiles.getTileTypeName(tileTypeIndex);
@@ -668,10 +668,10 @@ namespace bitstream{
 #endif
 
 	void Virtex7::setRowCounts(const string& inDeviceName) {
-		// The division between top and bottom rows can be determined by the locations of the 
-		// CLK_HROW_TOP_R and CLK_HROW_BOT_R tiles in the clock column.  The number of clock 
-		// regions above and including the CLK_HROW_TOP_R tile determine the number of top rows in 
-		// the bitstream.  The number of clock regions below and including the CLK_HROW_BOT_R tile 
+		// The division between top and bottom rows can be determined by the locations of the
+		// CLK_HROW_TOP_R and CLK_HROW_BOT_R tiles in the clock column.  The number of clock
+		// regions above and including the CLK_HROW_TOP_R tile determine the number of top rows in
+		// the bitstream.  The number of clock regions below and including the CLK_HROW_BOT_R tile
 		// determine the number of bottom rows in the bitstream.
 		using namespace torc::common;
 		switch(mDevice) {
@@ -699,8 +699,8 @@ namespace bitstream{
 			case eXC7Z020: mTopRowCount = 1; mBottomRowCount = 2; break;
 			case eXC7Z030: mTopRowCount = 1; mBottomRowCount = 3; break;
 			case eXC7Z045: mTopRowCount = 1; mBottomRowCount = 6; break;
-			default: 
-				std::cerr << "Bitstream row dimensions are undefined for " << mDevice << "." 
+			default:
+				std::cerr << "Bitstream row dimensions are undefined for " << mDevice << "."
 					<< std::endl;
 				mTopRowCount = 0; mBottomRowCount = 0;
 				break;
@@ -715,7 +715,7 @@ namespace bitstream{
 			if(mFrameRowCount == 0) return;
 			uint32_t frameCount = 0;
 
-//std::cerr << "row count: " << mDeviceInfo.getRowCount() << ", far row count: " << mFrameRowCount 
+//std::cerr << "row count: " << mDeviceInfo.getRowCount() << ", far row count: " << mFrameRowCount
 //	<< std::endl;
 
 			// map XDL tiles to top/bottom halves and frame rows
@@ -727,9 +727,9 @@ namespace bitstream{
 			baseCol = serialFrame * mDeviceInfo.getColCount();
 			for(uint32_t frameRow = mTopRowCount - 1; ; frameRow--) {
 				for(int i = 0; i < eClockRegionRows; i++, xdlRow++) {
-//std::cout << "mapping XDL row " << xdlRow << " to top frame row " << frameRow << " (serial " 
+//std::cout << "mapping XDL row " << xdlRow << " to top frame row " << frameRow << " (serial "
 //	<< serialFrame << ")" << " (base " << xdlBaseRow << ") from " << baseCol << std::endl;
-					mXdlRowToFrameRowDesignator[xdlRow] 
+					mXdlRowToFrameRowDesignator[xdlRow]
 						= FrameRowDesignator(eFarTop, serialFrame, xdlBaseRow, baseCol);
 				}
 				xdlBaseRow += eClockRegionRows;
@@ -742,9 +742,9 @@ namespace bitstream{
 			baseCol = serialFrame * mDeviceInfo.getColCount();
 			for(uint32_t frameRow = 0; frameRow < mBottomRowCount; frameRow++) {
 				for(int i = 0; i < eClockRegionRows; i++, xdlRow++) {
-//std::cout << "mapping XDL row " << xdlRow << " to bottom frame row " << frameRow << " (serial " 
+//std::cout << "mapping XDL row " << xdlRow << " to bottom frame row " << frameRow << " (serial "
 //	<< serialFrame << ")" << " (base " << xdlBaseRow << ") from " << baseCol << std::endl;
-					mXdlRowToFrameRowDesignator[xdlRow] 
+					mXdlRowToFrameRowDesignator[xdlRow]
 						= FrameRowDesignator(eFarBottom, serialFrame, xdlBaseRow, baseCol);
 				}
 				xdlBaseRow += eClockRegionRows;
@@ -776,21 +776,21 @@ namespace bitstream{
 						uint32_t bitColumnCount = 0;
 						for(ColumnIndex col; col < mDeviceInfo.getColCount(); col++) {
 							uint32_t realCol = col + baseCol;
-							uint32_t width 
+							uint32_t width
 								= mColumnDefs[mDeviceInfo.getColumnTypes()[col + baseCol]][i];
-//std::cerr << "block: " << i << ", xdl col: " << col << " => " << realCol << ": " 
+//std::cerr << "block: " << i << ", xdl col: " << col << " => " << realCol << ": "
 //	<< mDeviceInfo.getColumnTypes()[realCol] << std::endl;
 							// allocate the frame maps
 							for(uint32_t farMinor = 0; farMinor < width; farMinor++) {
-								FrameAddress far(EFarTopBottom(topBottom), 
+								FrameAddress far(EFarTopBottom(topBottom),
 									blockType, farRow, farMajor, farMinor);
 								mFrameIndexToAddress[frameIndex] = far;
 								mFrameAddressToIndex[far] = frameIndex;
 								frameIndex++;
 								blockFrameIndexBounds++;
 							}
-//if(width) std::cerr << "CALCULATED: " << (topBottom ? "B" : "T") << blockType << "(" << farRow 
-//	<< "," << farMajor << "." << (width - 1) << "): " 
+//if(width) std::cerr << "CALCULATED: " << (topBottom ? "B" : "T") << blockType << "(" << farRow
+//	<< "," << farMajor << "." << (width - 1) << "): "
 // << mColumnDefs[mDeviceInfo.getColumnTypes()[col + baseCol]].getName() << std::endl;
 							if(width > 0) {
 								farMajor++;
@@ -798,7 +798,7 @@ namespace bitstream{
 							}
 							frameCount += width;
 							// indexes for Bitstream Columns, only stores non-empty tile types
-							if(mDeviceInfo.getColumnTypes()[realCol] != eColumnTypeEmpty && 
+							if(mDeviceInfo.getColumnTypes()[realCol] != eColumnTypeEmpty &&
 								mDeviceInfo.getColumnTypes()[realCol] != eColumnTypeInt) {
 								mBitColumnToXdlColumn[bitColumnCount] = xdlColumnCount;
 								bitColumnCount++;
@@ -822,19 +822,19 @@ namespace bitstream{
 							frameIndex += getRowPadFrames();
 							blockFrameIndexBounds += getRowPadFrames();
 						}
-						if(debug) std::cout << "Last frame index:   [" << i << ", " << frameIndex 
+						if(debug) std::cout << "Last frame index:   [" << i << ", " << frameIndex
 							<< "]" << std::endl;
 					}
 				}
 				// stores frame index bounds for each block type
 				mBlockFrameIndexBounds[i] = blockFrameIndexBounds;
-				if(debug) std::cout << "***Block frame index bounds: " << mBlockFrameIndexBounds[i] 
+				if(debug) std::cout << "***Block frame index bounds: " << mBlockFrameIndexBounds[i]
 					<< std::endl;
 			}
 			// test to check proper indexing
 			if(debug) {
 				for(uint32_t i = 0; i < eFarBlockTypeCount; i++) {
-					for(uint32_t j = 0; j < mBitColumnIndexes[i].size(); j++) 
+					for(uint32_t j = 0; j < mBitColumnIndexes[i].size(); j++)
 						std::cout << "Bit Value at index: (" << i << ", " << j << ") : "
 							<< mBitColumnIndexes[i][j] << std::endl;
 					for(uint32_t k = 0; k < mXdlColumnIndexes[i].size(); k++)
@@ -860,28 +860,28 @@ namespace bitstream{
 		//	0000008d: SYNC
 		//	00000091: NOP x 1
 		//	00000095: TYPE1 WRITE TIMER: 00000000 (TimerForUser:Disabled, TimerForConfig:Disabled)
-		//	0000009d: TYPE1 WRITE WBSTAR: 00000000 (RevisionSelectTristate:Disabled, 
+		//	0000009d: TYPE1 WRITE WBSTAR: 00000000 (RevisionSelectTristate:Disabled,
 		//				NextRevisionSelect:00)
 		//	000000a5: TYPE1 WRITE CMD NULL
 		//	000000ad: NOP x 1
 		//	000000b1: TYPE1 WRITE CMD RCRC
 		//	000000b9: NOP x 2
 		//	000000c1: TYPE1 WRITE [UNKNOWN REG 19]: 00000000
-		//	000000c9: TYPE1 WRITE COR0: 02003fe5 (DONE_status:DonePin, DonePipe:Yes, DriveDone:No, 
-		//				Capture:Continuous, ConfigRate:[UNKNOWN 0], StartupClk:Cclk, DONE_cycle:4, 
+		//	000000c9: TYPE1 WRITE COR0: 02003fe5 (DONE_status:DonePin, DonePipe:Yes, DriveDone:No,
+		//				Capture:Continuous, ConfigRate:[UNKNOWN 0], StartupClk:Cclk, DONE_cycle:4,
 		//				Match_cycle:NoWait, LCK_cycle:No Wait, GTS_cycle:5, GWE_cycle:6)
-		//	000000d1: TYPE1 WRITE COR1: 00000000 (PersistDeassertAtDesynch:Disabled, 
-		//				ActionReadbackCRC:Continue, InitAsCRCErrorPin:Disabled, 
+		//	000000d1: TYPE1 WRITE COR1: 00000000 (PersistDeassertAtDesynch:Disabled,
+		//				ActionReadbackCRC:Continue, InitAsCRCErrorPin:Disabled,
 		//				ContinuousReadbackCRC:Enabled, BPI_1st_read_cycle:1, BPI_page_size:1)
 		//	000000d9: TYPE1 WRITE IDCODE: 03651093
 		//	000000e1: TYPE1 WRITE CMD SWITCH
 		//	000000e9: NOP x 1
-		//	000000ed: TYPE1 WRITE MASK: 00000401 (EFUSE_key:Protected, ICAP_sel:Protected, 
-		//				OverTempPowerDown:Protected, GLUTMASK:Protected, FARSRC:Protected, 
-		//				Encrypt:Protected, Security:Protected, Persist:Protected, 
+		//	000000ed: TYPE1 WRITE MASK: 00000401 (EFUSE_key:Protected, ICAP_sel:Protected,
+		//				OverTempPowerDown:Protected, GLUTMASK:Protected, FARSRC:Protected,
+		//				Encrypt:Protected, Security:Protected, Persist:Protected,
 		//				GTS_USER_B:Writable)
-		//	000000f5: TYPE1 WRITE CTL0: 00000501 (EFUSE_key:No, ICAP_sel:Top, 
-		//				OverTempPowerDown:Disable, GLUTMASK:Dynamic, FARSRC:FAR, Encrypt:No, 
+		//	000000f5: TYPE1 WRITE CTL0: 00000501 (EFUSE_key:No, ICAP_sel:Top,
+		//				OverTempPowerDown:Disable, GLUTMASK:Dynamic, FARSRC:FAR, Encrypt:No,
 		//				Security:None, Persist:No, GTS_USER_B:IoActive)
 		//	000000fd: TYPE1 WRITE MASK: 00000000 ()
 		//	00000105: TYPE1 WRITE CTL1: 00000000 ()
@@ -915,7 +915,7 @@ namespace bitstream{
 		// undocumented register 19
 		packets.push_back(VirtexPacket::makeType1Write(19, 0));
 		// configuration options register 0
-		packets.push_back(VirtexPacket::makeType1Write(eRegisterCOR0, 
+		packets.push_back(VirtexPacket::makeType1Write(eRegisterCOR0,
 				makeSubfield(eRegisterCOR0, "DONE_status", "DonePin") |
 				makeSubfield(eRegisterCOR0, "DonePipe", "Yes") |
 				makeSubfield(eRegisterCOR0, "DriveDone", "No") |
@@ -929,7 +929,7 @@ namespace bitstream{
 				makeSubfield(eRegisterCOR0, "GWE_cycle", "6") |
 			0));
 		// configuration options register 1
-		packets.push_back(VirtexPacket::makeType1Write(eRegisterCOR1, 
+		packets.push_back(VirtexPacket::makeType1Write(eRegisterCOR1,
 				makeSubfield(eRegisterCOR1, "PersistDeassertAtDesynch", "Disabled") |
 				makeSubfield(eRegisterCOR1, "ActionReadbackCRC", "Continue") |
 				makeSubfield(eRegisterCOR1, "InitAsCRCErrorPin", "Disabled") |
@@ -938,12 +938,12 @@ namespace bitstream{
 				makeSubfield(eRegisterCOR1, "BPI_page_size", "1") |
 			0));
 		// write the ID code
-		packets.push_back(VirtexPacket::makeType1Write(eRegisterIDCODE, 0x00000000));
+		packets.push_back(VirtexPacket::makeType1Write(eRegisterIDCODE, getIdCode()));
 		// clock and rate switch command
 		packets.push_back(VirtexPacket::makeType1Write(eRegisterCMD, eCommandSWITCH));
 		packets.push_back(nop);
 		// control register 0 mask
-		packets.push_back(VirtexPacket::makeType1Write(eRegisterMASK, 
+		packets.push_back(VirtexPacket::makeType1Write(eRegisterMASK,
 				makeSubfield(eRegisterMASK, "EFUSE_key", "Protected") |
 				makeSubfield(eRegisterMASK, "ICAP_sel", "Protected") |
 				makeSubfield(eRegisterMASK, "OverTempPowerDown", "Protected") |
@@ -955,7 +955,7 @@ namespace bitstream{
 				makeSubfield(eRegisterMASK, "GTS_USER_B", "Writable") |
 			0));
 		// control register 0
-		packets.push_back(VirtexPacket::makeType1Write(eRegisterCTL0, 
+		packets.push_back(VirtexPacket::makeType1Write(eRegisterCTL0,
 				makeSubfield(eRegisterCTL0, "EFUSE_key", "NO") |
 				makeSubfield(eRegisterCTL0, "ICAP_sel", "Top") |
 				makeSubfield(eRegisterCTL0, "OverTempPowerDown", "Disable") |
@@ -986,12 +986,12 @@ namespace bitstream{
 		//	00ae977d: TYPE1 WRITE CMD START
 		//	00ae9785: NOP x 1
 		//	00ae9789: TYPE1 WRITE FAR: 03be0000
-		//	00ae9791: TYPE1 WRITE MASK: 00000501 (EFUSE_key:Protected, ICAP_sel:Protected, 
-		//				OverTempPowerDown:Protected, GLUTMASK:Writable, FARSRC:Protected, 
-		//				Encrypt:Protected, Security:Protected, Persist:Protected, 
+		//	00ae9791: TYPE1 WRITE MASK: 00000501 (EFUSE_key:Protected, ICAP_sel:Protected,
+		//				OverTempPowerDown:Protected, GLUTMASK:Writable, FARSRC:Protected,
+		//				Encrypt:Protected, Security:Protected, Persist:Protected,
 		//				GTS_USER_B:Writable)
-		//	00ae9799: TYPE1 WRITE CTL0: 00000501 (EFUSE_key:No, ICAP_sel:Top, 
-		//				OverTempPowerDown:Disable, GLUTMASK:Dynamic, FARSRC:FAR, Encrypt:No, 
+		//	00ae9799: TYPE1 WRITE CTL0: 00000501 (EFUSE_key:No, ICAP_sel:Top,
+		//				OverTempPowerDown:Disable, GLUTMASK:Dynamic, FARSRC:FAR, Encrypt:No,
 		//				Security:None, Persist:No, GTS_USER_B:IoActive)
 		//	00ae97a1: TYPE1 WRITE CRC: e3ad7ea5
 		//	00ae97a9: NOP x 2
@@ -1015,10 +1015,10 @@ namespace bitstream{
 		packets.push_back(VirtexPacket::makeType1Write(eRegisterCMD, eCommandSTART));
 		packets.push_back(nop);
 		// frame address register
-		packets.push_back(VirtexPacket::makeType1Write(eRegisterFAR, 
+		packets.push_back(VirtexPacket::makeType1Write(eRegisterFAR,
 			eFarMaskBlockType | eFarMaskRow)); // is this what the configuration controller wants?
 		// control register 0 mask
-		packets.push_back(VirtexPacket::makeType1Write(eRegisterMASK, 
+		packets.push_back(VirtexPacket::makeType1Write(eRegisterMASK,
 				makeSubfield(eRegisterMASK, "EFUSE_key", "Protected") |
 				makeSubfield(eRegisterMASK, "ICAP_sel", "Protected") |
 				makeSubfield(eRegisterMASK, "OverTempPowerDown", "Protected") |
@@ -1030,7 +1030,7 @@ namespace bitstream{
 				makeSubfield(eRegisterMASK, "GTS_USER_B", "Writable") |
 			0));
 		// control register 0
-		packets.push_back(VirtexPacket::makeType1Write(eRegisterCTL0, 
+		packets.push_back(VirtexPacket::makeType1Write(eRegisterCTL0,
 				makeSubfield(eRegisterCTL0, "EFUSE_key", "NO") |
 				makeSubfield(eRegisterCTL0, "ICAP_sel", "Top") |
 				makeSubfield(eRegisterCTL0, "OverTempPowerDown", "Disable") |
@@ -1071,9 +1071,9 @@ namespace bitstream{
 		//		00000095: TYPE1 WRITE CMD RCRC
 		//		0000009d: NOP x 2
 		//		000000a5: TYPE1 WRITE IDCODE: 03651093
-		//	S	000000ad: TYPE1 WRITE COR0: 02003fe5 (DONE_status:DonePin, DonePipe:Yes, 
-		//					DriveDone:No, Capture:Continuous, ConfigRate:[UNKNOWN 0], 
-		//					StartupClk:Cclk, DONE_cycle:4, Match_cycle:NoWait, LCK_cycle:No Wait, 
+		//	S	000000ad: TYPE1 WRITE COR0: 02003fe5 (DONE_status:DonePin, DonePipe:Yes,
+		//					DriveDone:No, Capture:Continuous, ConfigRate:[UNKNOWN 0],
+		//					StartupClk:Cclk, DONE_cycle:4, Match_cycle:NoWait, LCK_cycle:No Wait,
 		//					GTS_cycle:5, GWE_cycle:6)
 		//	S	000000b5: TYPE1 WRITE CMD SHUTDOWN
 		//	S	000000bd: NOP x 1
@@ -1102,11 +1102,11 @@ namespace bitstream{
 		packets.push_back(nop);
 		packets.push_back(nop);
 		// write the ID code
-		packets.push_back(VirtexPacket::makeType1Write(eRegisterIDCODE, 0x00000000));
+		packets.push_back(VirtexPacket::makeType1Write(eRegisterIDCODE, getIdCode()));
 		// extra for shutdown bitstreams
 		if(inBitstreamType == eBitstreamTypePartialShutdown) {
 			// configuration options register 0
-			packets.push_back(VirtexPacket::makeType1Write(eRegisterCOR0, 
+			packets.push_back(VirtexPacket::makeType1Write(eRegisterCOR0,
 					makeSubfield(eRegisterCOR0, "DONE_status", "DonePin") |
 					makeSubfield(eRegisterCOR0, "DonePipe", "Yes") |
 					makeSubfield(eRegisterCOR0, "DriveDone", "No") |
@@ -1158,10 +1158,10 @@ namespace bitstream{
 			// restore command
 			packets.push_back(VirtexPacket::makeType1Write(eRegisterCMD, eCommandGRESTORE));
 			packets.push_back(nop);
+			// last frame command
+			packets.push_back(VirtexPacket::makeType1Write(eRegisterCMD, eCommandLFRM));
+			packets.insert(packets.end(), 100, nop);
 		}
-		// last frame command
-		packets.push_back(VirtexPacket::makeType1Write(eRegisterCMD, eCommandLFRM));
-		packets.insert(packets.end(), 100, nop);
 		// extra for shutdown bitstreams
 		if(inBitstreamType == eBitstreamTypePartialShutdown) {
 			// restore command
@@ -1172,10 +1172,11 @@ namespace bitstream{
 			packets.push_back(nop);
 		}
 		// frame address register
-		packets.push_back(VirtexPacket::makeType1Write(eRegisterFAR, 
+		packets.push_back(VirtexPacket::makeType1Write(eRegisterFAR,
 			eFarMaskBlockType | eFarMaskRow)); // is this what the configuration controller wants?
 		// write the CRC value
 		packets.push_back(VirtexPacket::makeType1Write(eRegisterCRC, 0x00000000));
+		//packets.insert(packets.end(), 2, nop);
 		// desynch command
 		packets.push_back(VirtexPacket::makeType1Write(eRegisterCMD, eCommandDESYNCH));
 		packets.insert(packets.end(), 16, nop);
@@ -1190,7 +1191,7 @@ namespace bitstream{
 		Virtex7::iterator e = end();
 		while(p < e) {
 		    const VirtexPacket& packet = *p++;
-		    if(packet.isType2() && packet.isWrite()) 
+		    if(packet.isType2() && packet.isWrite())
   				frameWords = packet.getWords();
 		}
 		uint32_t index = 0;
@@ -1205,7 +1206,7 @@ namespace bitstream{
 	}
 
 	void Virtex7::updateFullFrameBlocks(void) {
-		/// \todo If the packet size differs from the frame data size, we need to replace the 
+		/// \todo If the packet size differs from the frame data size, we need to replace the
 		///		entire packet.
 		uint32_t frameLength = getFrameLength();
 		typedef boost::shared_array<uint32_t> WordSharedArray;
@@ -1219,7 +1220,7 @@ namespace bitstream{
 				uint32_t* ptr = words.get();
 				for(uint32_t block = 0; block < 8; block++) {
 					for(uint32_t frame = 0; frame < mBlockFrameIndexBounds[block]; frame++) {
-						const VirtexFrameBlocks::word_t* words 
+						const VirtexFrameBlocks::word_t* words
 							= mFrameBlocks.mBlock[block][frame]->getWords();
 						for(uint32_t index = 0; index < frameLength; index++) *ptr++ = *words++;
 					}
@@ -1228,24 +1229,24 @@ namespace bitstream{
 		}
 	}
 
-	VirtexFrameBlocks Virtex7::getBitstreamFrames(EFarTopBottom inTopBottom, uint32_t inFrameRow, 
+	VirtexFrameBlocks Virtex7::getBitstreamFrames(EFarTopBottom inTopBottom, uint32_t inFrameRow,
 		uint32_t inBitCol, uint32_t inBlockCount) {
-		return getXdlFrames(inFrameRow + (inTopBottom == eFarBottom ? (mTopRowCount) : 0), 
+		return getXdlFrames(inFrameRow + (inTopBottom == eFarBottom ? (mTopRowCount) : 0),
 			mBitColumnToXdlColumn[inBitCol], inBlockCount);
 	}
 
-	VirtexFrameBlocks Virtex7::getBitstreamFrames(uint32_t inBitRow, uint32_t inBitCol, 
+	VirtexFrameBlocks Virtex7::getBitstreamFrames(uint32_t inBitRow, uint32_t inBitCol,
 		uint32_t& outBeginBit, uint32_t& outEndBit, uint32_t inBlockCount) {
-		return getXdlFrames(inBitRow, mBitColumnToXdlColumn[inBitCol], outBeginBit, outEndBit, 
+		return getXdlFrames(inBitRow, mBitColumnToXdlColumn[inBitCol], outBeginBit, outEndBit,
 			inBlockCount);
 	}
 
-	VirtexFrameBlocks Virtex7::getBitstreamFrames(uint32_t inSerialFrameRow, uint32_t inBitCol, 
+	VirtexFrameBlocks Virtex7::getBitstreamFrames(uint32_t inSerialFrameRow, uint32_t inBitCol,
 		uint32_t inBlockCount) {
 		return getXdlFrames(inSerialFrameRow, mBitColumnToXdlColumn[inBitCol], inBlockCount);
 	}
 
-	VirtexFrameBlocks Virtex7::getXdlFrames(uint32_t inXdlRow, uint32_t inXdlCol, 
+	VirtexFrameBlocks Virtex7::getXdlFrames(uint32_t inXdlRow, uint32_t inXdlCol,
 		uint32_t& outBeginBit, uint32_t& outEndBit, uint32_t inBlockCount) {
 
 		// look up the frame row designator for this XDL row
@@ -1261,14 +1262,14 @@ namespace bitstream{
 		//std::cout << "    designator.mTopBottom: " << designator.mTopBottom << std::endl;
 		//std::cout << "    designator.mFrameRow: " << designator.mFrameRow << std::endl;
 		//std::cout << "    designator.mXdlBaseRow: " << designator.mXdlBaseRow << std::endl;
-		//std::cout << "    designator.mColumnVectorBase: " << designator.mColumnVectorBase 
+		//std::cout << "    designator.mColumnVectorBase: " << designator.mColumnVectorBase
 		//	<< std::endl;
 
 		// provide bit information for the columns that we know
 		uint32_t index = relativeXdlRow;
 		uint32_t columnVectorBase = designator.mColumnVectorBase;
 		//std::cout << "    relativeXdlRow: " << relativeXdlRow << std::endl;
-		//std::cout << "    mDeviceInfo.getColumnTypes()[inXdlCol]: " 
+		//std::cout << "    mDeviceInfo.getColumnTypes()[inXdlCol]: "
 		//	<< mDeviceInfo.getColumnTypes()[inXdlCol + columnVectorBase] << std::endl;
 		switch(mDeviceInfo.getColumnTypes()[inXdlCol + columnVectorBase]) {
 		case eColumnTypeClb:
@@ -1302,7 +1303,7 @@ namespace bitstream{
 		return getXdlFrames(designator.mFrameRow, designator.mColumnVectorBase, inXdlCol);
 	}
 
-	VirtexFrameBlocks Virtex7::getXdlFrames(uint32_t inSerialFrameRow, 
+	VirtexFrameBlocks Virtex7::getXdlFrames(uint32_t inSerialFrameRow,
 		uint32_t inColumnVectorBase, uint32_t inXdlCol, uint32_t inBlockCount) {
 		if(inSerialFrameRow > getFrameRowCount()) return VirtexFrameBlocks();
 
@@ -1321,7 +1322,7 @@ namespace bitstream{
 			//std::cout << "    xdlColumnIndex[i]: " << xdlColumnIndex[i] << std::endl;
 			//std::cout << "    col: " << col << std::endl;
 		}
-		// extract the tile frames for the specified FAR 
+		// extract the tile frames for the specified FAR
 		VirtexFrameBlocks frameBlocks;
 		for(uint32_t i = 0; i < inBlockCount; i++) {
 		    int startIndex = xdlColumnIndex[i];
@@ -1329,13 +1330,13 @@ namespace bitstream{
 				frameBlocks.mBlock[i].push_back(mFrameBlocks.mBlock[i][startIndex+j]);
 				if(!xdlColumnBound[i]) continue;
 				int offset = i > 0 ? mXdlColumnIndexes[i-1].back() + 2 : 0;
-				std::cout << "Virtex7::getXdlFrames(): pushing mBlock[" << i << "][" 
-					<< (startIndex + offset + j) << "]: " 
+				std::cout << "Virtex7::getXdlFrames(): pushing mBlock[" << i << "]["
+					<< (startIndex + offset + j) << "]: "
 					<< mFrameIndexToAddress[startIndex + offset + j] << std::endl;
-				//std::cout << "    pushing mBlock[" << i << "][" << (startIndex + offset) << "]-[" 
-				//	<< (startIndex + offset + xdlColumnBound[i] - 1) << "]" << ": " 
-				//	<< mFrameIndexToAddress[startIndex + offset] << " - " 
-				//	<< mFrameIndexToAddress[startIndex + offset + xdlColumnBound[i] - 1] 
+				//std::cout << "    pushing mBlock[" << i << "][" << (startIndex + offset) << "]-["
+				//	<< (startIndex + offset + xdlColumnBound[i] - 1) << "]" << ": "
+				//	<< mFrameIndexToAddress[startIndex + offset] << " - "
+				//	<< mFrameIndexToAddress[startIndex + offset + xdlColumnBound[i] - 1]
 				//	<< std::endl;
 			}
 		}
@@ -1343,7 +1344,7 @@ namespace bitstream{
 	}
 
 	uint32_t Virtex7::getPrimaryXdlColumn(uint32_t inXdlRow, uint32_t inXdlCol) {
-		// INT columns "belong" with their corresponding primary column in the bitstream, so if the 
+		// INT columns "belong" with their corresponding primary column in the bitstream, so if the
 		// caller hands us an INT column, we look for the next primary column;
 		// if the caller passes in a primary column, we return it as is
 		const ColumnTypeVector& columns = mDeviceInfo.getColumnTypes();
@@ -1361,14 +1362,14 @@ namespace bitstream{
 			// this is an INT_R
 			while(p < e) {
 				col++; p++; if(p == e) break;
-				if(*p != eColumnTypeEmpty && *p != eColumnTypeVframe && *p != eColumnTypeCfg 
+				if(*p != eColumnTypeEmpty && *p != eColumnTypeVframe && *p != eColumnTypeCfg
 					&& *p != eColumnTypeClock) return col;
 			}
 		} else {
 			// this is an INT_L
 			while(p > b) {
 				col--; p--;
-				if(*p != eColumnTypeEmpty && *p != eColumnTypeVframe && *p != eColumnTypeCfg 
+				if(*p != eColumnTypeEmpty && *p != eColumnTypeVframe && *p != eColumnTypeCfg
 					&& *p != eColumnTypeClock) return col;
 			}
 		}
@@ -1415,13 +1416,13 @@ namespace bitstream{
 				if(ip != mFrameAddressToIndex.end()) frameIndex = ip->second;
 			}
 			// process FDRI write packets
-			else if(packet.isWrite() 
+			else if(packet.isWrite()
 				&& (
 					// this is a Type 2 packet and the prior Type 1 address was FDRI
 					(packet.isType2() && lastAddress == eRegisterFDRI)
 				||
 					// this is a non-empty Type 1 packet and its address is FDRI
-					(packet.isType1() && packet.getAddress() == eRegisterFDRI 
+					(packet.isType1() && packet.getAddress() == eRegisterFDRI
 					&& packet.getWordCount() > 0)
 				)) {
 				// determine the number of frames in the packet and look up the frame words
@@ -1447,11 +1448,11 @@ namespace bitstream{
 					}
 				}
 				if(frameIndex != frameStart[frameAddress.mBlockType + 1]) {
-					// if we ended on a pad frame, where the current index has no corresponding 
+					// if we ended on a pad frame, where the current index has no corresponding
 					// frame address, we need to advance to the next valid frame address
-					if(mFrameIndexToAddress.find(frameIndex) == mFrameIndexToAddress.end()) 
+					if(mFrameIndexToAddress.find(frameIndex) == mFrameIndexToAddress.end())
 						frameIndex++;
-					if(mFrameIndexToAddress.find(frameIndex) == mFrameIndexToAddress.end()) 
+					if(mFrameIndexToAddress.find(frameIndex) == mFrameIndexToAddress.end())
 						frameIndex++;
 					// at this point we should again be on a valid frame
 					FrameIndexToAddress::iterator ap = mFrameIndexToAddress.find(frameIndex);
@@ -1493,7 +1494,7 @@ namespace bitstream{
 			}
 			// stop on the first CRC after the last FDRI write
 			// (Beware: the zero "address" of a Type 2 packet looks like the CRC register)
-		    if(stop < fdri && packet.isWrite() && packet.isType1() 
+		    if(stop < fdri && packet.isWrite() && packet.isType1()
 				&& packet.getAddress() == eRegisterCRC) {
 				stop = p;
 			}
@@ -1537,7 +1538,7 @@ namespace bitstream{
 
 		// determine the total size of the frames to write
 		size_t size = 0;
-		for(int i = 0; i < eBlockTypeCount; i++) 
+		for(int i = 0; i < eBlockTypeCount; i++)
 			size += mBlockFrameIndexBounds[i] * getFrameLength();
 		word_t* frameContents = new VirtexFrameSet::word_t[size];
 		word_t* pos = frameContents;
@@ -1604,19 +1605,19 @@ namespace bitstream{
 				// look up the current frame
 				VirtexFrameSharedPtr framePtr = *p++;
 				// determine whether the frame fits inclusion criteria
-					// we include dirty frames, we include clean frames if permitted by the caller, 
+					// we include dirty frames, we include clean frames if permitted by the caller,
 					// and if we are collecting frames and we encounter pad frames, we include them,
 					// but we stop collecting if we reach the last frame in the set
 				/// \todo mFrameIndexToAddress.size() is too short because excludes pad frames
-				bool include = p < e 
+				bool include = p < e
 					&& (
-						framePtr->isDirty() 
-						|| (inFrameInclusion == eFrameIncludeAllUsedFrames && framePtr->isUsed()) 
-						|| (started && blockStart + index < mFrameIndexToAddress.size() && 
-							mFrameIndexToAddress.find(blockStart + index) 
+						framePtr->isDirty()
+						|| (inFrameInclusion == eFrameIncludeAllUsedFrames && framePtr->isUsed())
+						|| (started && blockStart + index < mFrameIndexToAddress.size() &&
+							mFrameIndexToAddress.find(blockStart + index)
 								== mFrameIndexToAddress.end())
 					);
-				// if we are accumulating frames and this frame doesn't meet the criteria, process 
+				// if we are accumulating frames and this frame doesn't meet the criteria, process
 				// the collection of frames and stop collecting
 				if((started && !include)) {
 					started = false;
@@ -1624,10 +1625,10 @@ namespace bitstream{
 					uint32_t currentIndex = startIndex;
 					// std::cerr << "    stopped at: " << stopIndex << std::endl;
 					// include two trailing pad frames if appropriate
-					if(mFrameIndexToAddress.find(blockStart + stopIndex + 1) 
+					if(mFrameIndexToAddress.find(blockStart + stopIndex + 1)
 						== mFrameIndexToAddress.end()) {
 						stopIndex++;
-						if(mFrameIndexToAddress.find(blockStart + stopIndex + 1) 
+						if(mFrameIndexToAddress.find(blockStart + stopIndex + 1)
 							== mFrameIndexToAddress.end())
 							stopIndex++;
 					}
@@ -1648,7 +1649,7 @@ namespace bitstream{
 						currentIndex++;
 					}
 					// write the starting frame address
-					packets.push_back(VirtexPacket::makeType1Write(eRegisterFAR, 
+					packets.push_back(VirtexPacket::makeType1Write(eRegisterFAR,
 						mFrameIndexToAddress[blockStart + startIndex]));
 					packets.push_back(nop);
 					// if the size is more than 2048 words, we have to use a Type 2 write
@@ -1659,7 +1660,7 @@ namespace bitstream{
 						packets.push_back(VirtexPacket::makeType2Write(size, frameContents));
 					} else {
 						// write all frames to FDRI
-						packets.push_back(VirtexPacket::makeType1Write(eRegisterFDRI, size, 
+						packets.push_back(VirtexPacket::makeType1Write(eRegisterFDRI, size,
 							frameContents));
 					}
 					if(size) empty = false;

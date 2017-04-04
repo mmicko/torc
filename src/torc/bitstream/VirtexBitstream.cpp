@@ -2,15 +2,15 @@
 // $HeadURL$
 // $Id$
 
-// This program is free software: you can redistribute it and/or modify it under the terms of the 
-// GNU General Public License as published by the Free Software Foundation, either version 3 of the 
+// This program is free software: you can redistribute it and/or modify it under the terms of the
+// GNU General Public License as published by the Free Software Foundation, either version 3 of the
 // License, or (at your option) any later version.
-// 
-// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See 
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+// without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
 // the GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License along with this program.  If 
+//
+// You should have received a copy of the GNU General Public License along with this program.  If
 // not, see <http://www.gnu.org/licenses/>.
 
 #include "torc/bitstream/VirtexBitstream.hpp"
@@ -43,7 +43,7 @@ namespace bitstream {
 		while(p < e) p++->write(inStream);
 	}
 
-	void VirtexBitstream::updateFramePackets(EBitstreamType inBitstreamType, 
+	void VirtexBitstream::updateFramePackets(EBitstreamType inBitstreamType,
 		EFrameInclude inFrameInclusion) {
 		// delete the existing frame packets
 		iterator position = deleteFramePackets();
@@ -55,7 +55,7 @@ namespace bitstream {
 		}
 	}
 
-	void VirtexBitstream::generateBitstream(EBitstreamType inBitstreamType, 
+	void VirtexBitstream::generateBitstream(EBitstreamType inBitstreamType,
 		EFrameInclude inFrameInclusion) {
 		// discard all packets
 		clear();
@@ -86,21 +86,21 @@ namespace bitstream {
 
 	// template instantiations
 	template void VirtexBitstream::readFramePackets4567<Virtex7>(uint32_t inBlockFrameIndexBounds[],
-		std::map<Virtex7::FrameAddress, uint32_t>& inFrameAddressToIndex, 
+		std::map<Virtex7::FrameAddress, uint32_t>& inFrameAddressToIndex,
 		std::map<uint32_t, Virtex7::FrameAddress>& inFrameIndexToAddress);
 	template void VirtexBitstream::readFramePackets4567<Virtex6>(uint32_t inBlockFrameIndexBounds[],
-		std::map<Virtex6::FrameAddress, uint32_t>& inFrameAddressToIndex, 
+		std::map<Virtex6::FrameAddress, uint32_t>& inFrameAddressToIndex,
 		std::map<uint32_t, Virtex6::FrameAddress>& inFrameIndexToAddress);
 	template void VirtexBitstream::readFramePackets4567<Virtex5>(uint32_t inBlockFrameIndexBounds[],
-		std::map<Virtex5::FrameAddress, uint32_t>& inFrameAddressToIndex, 
+		std::map<Virtex5::FrameAddress, uint32_t>& inFrameAddressToIndex,
 		std::map<uint32_t, Virtex5::FrameAddress>& inFrameIndexToAddress);
 	template void VirtexBitstream::readFramePackets4567<Virtex4>(uint32_t inBlockFrameIndexBounds[],
-		std::map<Virtex4::FrameAddress, uint32_t>& inFrameAddressToIndex, 
+		std::map<Virtex4::FrameAddress, uint32_t>& inFrameAddressToIndex,
 		std::map<uint32_t, Virtex4::FrameAddress>& inFrameIndexToAddress);
 	// template definition
 	template <class ARCH> void VirtexBitstream::readFramePackets4567(
-		uint32_t inBlockFrameIndexBounds[], 
-		std::map<typename ARCH::FrameAddress, uint32_t>& inFrameAddressToIndex, 
+		uint32_t inBlockFrameIndexBounds[],
+		std::map<typename ARCH::FrameAddress, uint32_t>& inFrameAddressToIndex,
 		std::map<uint32_t, typename ARCH::FrameAddress>& inFrameIndexToAddress) {
 		// clean up the template parameters
 		typedef typename ARCH::FrameAddress FrameAddress;
@@ -132,23 +132,28 @@ namespace bitstream {
 		typename ARCH::iterator e = end();
 		while(p < e) {
 		    const VirtexPacket& packet = *p++;
+
+			// Read ID Code
+			if(packet.isWrite() && packet.getAddress() == ARCH::eRegisterIDCODE && packet.getWordCount() == 1) {
+				mIdCode = packet[1];
+			}
 			// process FAR write packets
-			if(packet.isWrite() && packet.getAddress() == ARCH::eRegisterFAR) {
+			else if(packet.isWrite() && packet.getAddress() == ARCH::eRegisterFAR) {
 				// extract the new frame address
 				frameAddress = typename ARCH::FrameAddress(packet[1]);
 				// convert the frame address to the corresponding frame index
-				typename FrameAddressToIndex::iterator ip 
+				typename FrameAddressToIndex::iterator ip
 					= inFrameAddressToIndex.find(frameAddress);
 				if(ip != inFrameAddressToIndex.end()) frameIndex = ip->second;
 			}
 			// process FDRI write packets
-			else if(packet.isWrite() 
+			else if(packet.isWrite()
 				&& (
 					// this is a Type 2 packet and the prior Type 1 address was FDRI
 					(packet.isType2() && lastAddress == ARCH::eRegisterFDRI)
 				||
 					// this is a non-empty Type 1 packet and its address is FDRI
-					(packet.isType1() && packet.getAddress() == ARCH::eRegisterFDRI 
+					(packet.isType1() && packet.getAddress() == ARCH::eRegisterFDRI
 					&& packet.getWordCount() > 0)
 				)) {
 				// determine the number of frames in the packet and look up the frame words
@@ -165,7 +170,7 @@ namespace bitstream {
 					mFrameBlocks.mBlock[blockType][index]->setUsed();
 					position += frameLength;
 					frameIndex++;
-					typename FrameIndexToAddress::iterator ap 
+					typename FrameIndexToAddress::iterator ap
 						= inFrameIndexToAddress.find(frameIndex);
 					if(ap != inFrameIndexToAddress.end()) frameAddress = ap->second;
 					// sanity escape exit (which also breaks out of the higher level loop)
@@ -175,14 +180,14 @@ namespace bitstream {
 					}
 				}
 				if(frameIndex != frameStart[frameAddress.mBlockType + 1]) {
-					// if we ended on a pad frame, where the current index has no corresponding 
+					// if we ended on a pad frame, where the current index has no corresponding
 					// frame address, we need to advance to the next valid frame address
-					if(inFrameIndexToAddress.find(frameIndex) == inFrameIndexToAddress.end()) 
+					if(inFrameIndexToAddress.find(frameIndex) == inFrameIndexToAddress.end())
 						frameIndex++;
-					if(inFrameIndexToAddress.find(frameIndex) == inFrameIndexToAddress.end()) 
+					if(inFrameIndexToAddress.find(frameIndex) == inFrameIndexToAddress.end())
 						frameIndex++;
 					// at this point we should again be on a valid frame
-					typename FrameIndexToAddress::iterator ap 
+					typename FrameIndexToAddress::iterator ap
 						= inFrameIndexToAddress.find(frameIndex);
 					if(ap != inFrameIndexToAddress.end()) frameAddress = ap->second;
 					else if(frameIndex == frameStart[frameAddress.mBlockType + 1]) /* at end */;
@@ -234,7 +239,7 @@ namespace bitstream {
 			}
 			// stop on the first CRC after the last FDRI write
 			// (Beware: the zero "address" of a Type 2 packet looks like the CRC register)
-		    if(stop < fdri && packet.isWrite() && packet.isType1() 
+		    if(stop < fdri && packet.isWrite() && packet.isType1()
 				&& packet.getAddress() == ARCH::eRegisterCRC) {
 				stop = p;
 			}
@@ -294,7 +299,7 @@ namespace bitstream {
 
 		// determine the total size of the frames to write
 		size_t size = 0;
-		for(int i = 0; i < eBlockTypeCount; i++) 
+		for(int i = 0; i < eBlockTypeCount; i++)
 			size += inBlockFrameIndexBounds[i] * getFrameLength();
 		word_t* frameContents = new VirtexFrameSet::word_t[size];
 		word_t* pos = frameContents;
@@ -349,24 +354,24 @@ namespace bitstream {
 	// template instantiations
 	template VirtexPacketVector VirtexBitstream::generatePartialBitstreamPackets4567<Virtex7>(
 		EFrameInclude inFrameInclusion,
-		std::map<Virtex7::FrameAddress, uint32_t>& inFrameAddressToIndex, 
+		std::map<Virtex7::FrameAddress, uint32_t>& inFrameAddressToIndex,
 		std::map<uint32_t, Virtex7::FrameAddress>& inFrameIndexToAddress);
 	template VirtexPacketVector VirtexBitstream::generatePartialBitstreamPackets4567<Virtex6>(
 		EFrameInclude inFrameInclusion,
-		std::map<Virtex6::FrameAddress, uint32_t>& inFrameAddressToIndex, 
+		std::map<Virtex6::FrameAddress, uint32_t>& inFrameAddressToIndex,
 		std::map<uint32_t, Virtex6::FrameAddress>& inFrameIndexToAddress);
 	template VirtexPacketVector VirtexBitstream::generatePartialBitstreamPackets4567<Virtex5>(
 		EFrameInclude inFrameInclusion,
-		std::map<Virtex5::FrameAddress, uint32_t>& inFrameAddressToIndex, 
+		std::map<Virtex5::FrameAddress, uint32_t>& inFrameAddressToIndex,
 		std::map<uint32_t, Virtex5::FrameAddress>& inFrameIndexToAddress);
 	template VirtexPacketVector VirtexBitstream::generatePartialBitstreamPackets4567<Virtex4>(
 		EFrameInclude inFrameInclusion,
-		std::map<Virtex4::FrameAddress, uint32_t>& inFrameAddressToIndex, 
+		std::map<Virtex4::FrameAddress, uint32_t>& inFrameAddressToIndex,
 		std::map<uint32_t, Virtex4::FrameAddress>& inFrameIndexToAddress);
 	// template definition
 	template <class ARCH> VirtexPacketVector VirtexBitstream::generatePartialBitstreamPackets4567(
-		EFrameInclude inFrameInclusion, 
-		std::map<typename ARCH::FrameAddress, uint32_t>& inFrameAddressToIndex, 
+		EFrameInclude inFrameInclusion,
+		std::map<typename ARCH::FrameAddress, uint32_t>& inFrameAddressToIndex,
 		std::map<uint32_t, typename ARCH::FrameAddress>& inFrameIndexToAddress) {
 
 		// declare the packet vector and define a NOP packet
@@ -374,11 +379,13 @@ namespace bitstream {
 		VirtexPacketVector packets;
 		VirtexPacket nop(VirtexPacket::makeHeader(ePacketType1, eOpcodeNOP, 0, 0));
 
-		// write the starting frame address
-		packets.push_back(VirtexPacket::makeType1Write(ARCH::eRegisterFAR, 0));
 		// write the write configuration register command
-		packets.push_back(VirtexPacket::makeType1Write(ARCH::eRegisterCMD, ARCH::eCommandWCFG));
-		packets.push_back(nop);
+		//packets.push_back(VirtexPacket::makeType1Write(ARCH::eRegisterCMD, ARCH::eCommandWCFG));
+		//packets.push_back(nop);
+
+		// write the starting frame address
+		//packets.push_back(VirtexPacket::makeType1Write(ARCH::eRegisterFAR, 0));
+		//packets.push_back(nop);
 
 		// iterate through the frame blocks looking for groups of contiguous frames that are in use
 		bool empty = true;
@@ -398,19 +405,19 @@ namespace bitstream {
 				// look up the current frame
 				VirtexFrameSharedPtr framePtr = *p++;
 				// determine whether the frame fits inclusion criteria
-					// we include dirty frames, we include clean frames if permitted by the caller, 
+					// we include dirty frames, we include clean frames if permitted by the caller,
 					// and if we are collecting frames and we encounter pad frames, we include them,
 					// but we stop collecting if we reach the last frame in the set
 				/// \todo mFrameIndexToAddress.size() is too short because excludes pad frames
-				bool include = p < e 
+				bool include = p < e
 					&& (
-						framePtr->isDirty() 
-						|| (inFrameInclusion == eFrameIncludeAllUsedFrames && framePtr->isUsed()) 
-						|| (started && blockStart + index < inFrameIndexToAddress.size() && 
-							inFrameIndexToAddress.find(blockStart + index) 
+						framePtr->isDirty()
+						|| (inFrameInclusion == eFrameIncludeAllUsedFrames && framePtr->isUsed())
+						|| (started && blockStart + index < inFrameIndexToAddress.size() &&
+							inFrameIndexToAddress.find(blockStart + index)
 								== inFrameIndexToAddress.end())
 					);
-				// if we are accumulating frames and this frame doesn't meet the criteria, process 
+				// if we are accumulating frames and this frame doesn't meet the criteria, process
 				// the collection of frames and stop collecting
 				if((started && !include)) {
 					started = false;
@@ -418,10 +425,10 @@ namespace bitstream {
 					uint32_t currentIndex = startIndex;
 					// std::cerr << "    stopped at: " << stopIndex << std::endl;
 					// include two trailing pad frames if appropriate
-					if(inFrameIndexToAddress.find(blockStart + stopIndex + 1) 
+					if(inFrameIndexToAddress.find(blockStart + stopIndex + 1)
 						== inFrameIndexToAddress.end()) {
 						stopIndex++;
-						if(inFrameIndexToAddress.find(blockStart + stopIndex + 1) 
+						if(inFrameIndexToAddress.find(blockStart + stopIndex + 1)
 							== inFrameIndexToAddress.end())
 							stopIndex++;
 					}
@@ -441,19 +448,23 @@ namespace bitstream {
 						else do { *pos++ = 0; wp++; } while(wp < we); // frames with no words
 						currentIndex++;
 					}
+
+					packets.push_back(VirtexPacket::makeType1Write(ARCH::eRegisterCMD, ARCH::eCommandWCFG));
+					packets.push_back(nop);
+
 					// write the starting frame address
-					packets.push_back(VirtexPacket::makeType1Write(ARCH::eRegisterFAR, 
-						inFrameIndexToAddress[blockStart + startIndex]));
+					packets.push_back(VirtexPacket::makeType1Write(ARCH::eRegisterFAR,
+						inFrameIndexToAddress[blockStart + startIndex])); // HACK HACK
 					packets.push_back(nop);
 					// if the size is more than 2048 words, we have to use a Type 2 write
-					if(size > 2048) {
+					if(true || size > 2048) {
 						// write 0 bytes to FDRI (in preparation for type 2 write packet)
 						packets.push_back(VirtexPacket::makeNullType1Write(ARCH::eRegisterFDRI));
 						// write all frames to FDRI
 						packets.push_back(VirtexPacket::makeType2Write(size, frameContents));
 					} else {
 						// write all frames to FDRI
-						packets.push_back(VirtexPacket::makeType1Write(ARCH::eRegisterFDRI, size, 
+						packets.push_back(VirtexPacket::makeType1Write(ARCH::eRegisterFDRI, size,
 							frameContents));
 					}
 					if(size) empty = false;
@@ -494,9 +505,9 @@ namespace bitstream {
 			case DeviceDesignator::eFamilyVirtex: case DeviceDesignator::eFamilyVirtexE:
 			case DeviceDesignator::eFamilyVirtex2: case DeviceDesignator::eFamilyVirtex2P:
 				updateCrc16(family); break;
-			case DeviceDesignator::eFamilyVirtex4: case DeviceDesignator::eFamilyVirtex5: 
+			case DeviceDesignator::eFamilyVirtex4: case DeviceDesignator::eFamilyVirtex5:
 			case DeviceDesignator::eFamilyVirtex6: case DeviceDesignator::eFamilyArtix7:
-			case DeviceDesignator::eFamilyKintex7: case DeviceDesignator::eFamilyVirtex7: 
+			case DeviceDesignator::eFamilyKintex7: case DeviceDesignator::eFamilyVirtex7:
 			case DeviceDesignator::eFamilyZynq7000: default:
 				updateCrc32(family); break;
 		}
@@ -511,15 +522,15 @@ namespace bitstream {
 		uint32_t addressLength = 0;
 		bool autoCrc = false;
 		switch(inFamily) {
-		case DeviceDesignator::eFamilyVirtex: case DeviceDesignator::eFamilyVirtexE: 
-			cmdRegister = Virtex::eRegisterCMD; rcrcCommand = Virtex::eCommandRCRC; 
-			fdriRegister = Virtex::eRegisterFDRI; crcRegister = Virtex::eRegisterCRC; 
-			addressLength = 4; autoCrc = false; 
+		case DeviceDesignator::eFamilyVirtex: case DeviceDesignator::eFamilyVirtexE:
+			cmdRegister = Virtex::eRegisterCMD; rcrcCommand = Virtex::eCommandRCRC;
+			fdriRegister = Virtex::eRegisterFDRI; crcRegister = Virtex::eRegisterCRC;
+			addressLength = 4; autoCrc = false;
 			break;
-		case DeviceDesignator::eFamilyVirtex2: case DeviceDesignator::eFamilyVirtex2P: 
-			cmdRegister = Virtex2::eRegisterCMD; rcrcCommand = Virtex2::eCommandRCRC; 
-			fdriRegister = Virtex2::eRegisterFDRI; crcRegister = Virtex::eRegisterCRC; 
-			addressLength = 5; autoCrc = true; 
+		case DeviceDesignator::eFamilyVirtex2: case DeviceDesignator::eFamilyVirtex2P:
+			cmdRegister = Virtex2::eRegisterCMD; rcrcCommand = Virtex2::eCommandRCRC;
+			fdriRegister = Virtex2::eRegisterFDRI; crcRegister = Virtex::eRegisterCRC;
+			addressLength = 5; autoCrc = true;
 			break;
 		default:
 			std::cerr << "Unsupported architecture in VirtexBitstream::updateCrc16()." << std::endl;
@@ -581,22 +592,22 @@ namespace bitstream {
 		uint32_t rcrcCommand = 0;
 		uint32_t addressLength = 5;
 		switch(inFamily) {
-		case DeviceDesignator::eFamilyVirtex4: 
-			cmdRegister = Virtex4::eRegisterCMD; rcrcCommand = Virtex4::eCommandRCRC; 
-			crcRegister = Virtex4::eRegisterCRC; 
+		case DeviceDesignator::eFamilyVirtex4:
+			cmdRegister = Virtex4::eRegisterCMD; rcrcCommand = Virtex4::eCommandRCRC;
+			crcRegister = Virtex4::eRegisterCRC;
 			break;
-		case DeviceDesignator::eFamilyVirtex5: 
-			cmdRegister = Virtex5::eRegisterCMD; rcrcCommand = Virtex5::eCommandRCRC; 
-			crcRegister = Virtex5::eRegisterCRC; 
+		case DeviceDesignator::eFamilyVirtex5:
+			cmdRegister = Virtex5::eRegisterCMD; rcrcCommand = Virtex5::eCommandRCRC;
+			crcRegister = Virtex5::eRegisterCRC;
 			break;
-		case DeviceDesignator::eFamilyVirtex6: 
-			cmdRegister = Virtex6::eRegisterCMD; rcrcCommand = Virtex6::eCommandRCRC; 
-			crcRegister = Virtex6::eRegisterCRC; 
+		case DeviceDesignator::eFamilyVirtex6:
+			cmdRegister = Virtex6::eRegisterCMD; rcrcCommand = Virtex6::eCommandRCRC;
+			crcRegister = Virtex6::eRegisterCRC;
 			break;
-		case DeviceDesignator::eFamilyArtix7: case DeviceDesignator::eFamilyKintex7: 
-		case DeviceDesignator::eFamilyVirtex7: case DeviceDesignator::eFamilyZynq7000: 
-			cmdRegister = Virtex7::eRegisterCMD; rcrcCommand = Virtex7::eCommandRCRC; 
-			crcRegister = Virtex7::eRegisterCRC; 
+		case DeviceDesignator::eFamilyArtix7: case DeviceDesignator::eFamilyKintex7:
+		case DeviceDesignator::eFamilyVirtex7: case DeviceDesignator::eFamilyZynq7000:
+			cmdRegister = Virtex7::eRegisterCMD; rcrcCommand = Virtex7::eCommandRCRC;
+			crcRegister = Virtex7::eRegisterCRC;
 			break;
 		default:
 			std::cerr << "Unsupported architecture in VirtexBitstream::updateCrc32()." << std::endl;
