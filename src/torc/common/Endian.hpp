@@ -25,6 +25,13 @@
 // pull in ntohs(), ntohl(), htons(), and ntonl()
 #ifdef _WIN32
 	#include <winsock2.h>
+	// This pulls in Windows deps with strange macros
+	#ifdef far
+		#undef far
+	#endif
+	#ifdef near
+		#undef near
+	#endif
 #else
 	#include <netinet/in.h>
 #endif
