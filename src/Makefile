@@ -29,7 +29,8 @@ LDFLAGS = \
 	-lboost_system \
 	-lboost_thread \
 	-lstdc++ \
-	-lm
+	-lm \
+	$(USER_LDFLAGS)
 
 LDTESTFLAGS = \
 	-lboost_unit_test_framework
