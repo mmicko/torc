@@ -96,7 +96,7 @@ $(TORC_DIR)/externals/zlib/zfstream.o: $(TORC_DIR)/externals/zlib/contrib/iostre
 $(TORC_DIR)/externals/zlib/zfstream.d: $(TORC_DIR)/externals/zlib/contrib/iostream3/zfstream.cc
 	@set -e; rm -f $@; \
 	$(CC) -MM -I$(TORC_DIR)/externals/zlib/contrib/iostream3 $(CCFLAGS) $(EXTRA_CCFLAGS) $< |  \
-	sed -e '/boost/d' -e 's|.*:|$*.o:|' > $@;
+	sed -e 's|^[^ :]*:|$*.o:|' > $@;
 
 ## Special Case for Verilator
 
@@ -157,7 +157,7 @@ $(VERILATOR_SRC_DIR)/%.d: $(VERILATOR_SRC_DIR)/%.cpp $(VERILATOR_SRC_DIR)/V3Ast_
 	@cd $(VERILATOR_SRC_DIR); \
 	set -e; rm -f $@; \
 	$(CC) -MM $(CCFLAGS) $(EXTRA_CCFLAGS) $< |  \
-	sed -e '/boost/d' -e 's|.*:|$*.o:|' > $@;
+	sed -e 's|^[^ :]*:|$*.o:|' > $@;
 
 # compile c++ sources 
 %.o: %.cpp
@@ -175,19 +175,19 @@ $(VERILATOR_SRC_DIR)/%.d: $(VERILATOR_SRC_DIR)/%.cpp $(VERILATOR_SRC_DIR)/V3Ast_
 %.d: %.cpp
 	@set -e; rm -f $@; \
 	$(CC) -MM $(CCFLAGS) $(EXTRA_CCFLAGS) $< |  \
-	sed -e '/boost/d' -e 's|.*:|$*.o:|' > $@;
+	sed -e 's|^[^ :]*:|$*.o:|' > $@;
 
 # build dependency files for .c
 %.d: %.c
 	@set -e; rm -f $@; \
 	$(CC) -MM $(CFLAGS) $(EXTRA_CFLAGS) $< |  \
-	sed -e '/boost/d' -e 's|.*:|$*.o:|' > $@;
+	sed -e 's|^[^ :]*:|$*.o:|' > $@;
 
 # build dependency files for .cc
 %.d: %.cc
 	@set -e; rm -f $@; \
 	$(CC) -MM $(CCFLAGS) $(EXTRA_CCFLAGS) $< |  \
-	sed -e '/boost/d' -e 's|.*:|$*.o:|' > $@;
+	sed -e 's|^[^ :]*:|$*.o:|' > $@;
 
 # clean everything
 clean::
