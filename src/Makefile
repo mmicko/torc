@@ -142,11 +142,13 @@ endif
 
 # Build Real Objects File
 $(TORC_REAL_OBJS_FILE): $(TORC_REAL_OBJS) $(TORC_DEPS)
-	@echo $(TORC_REAL_OBJS) > $(TORC_REAL_OBJS_FILE)
+	$(file > $(TORC_REAL_OBJS_FILE),$(TORC_REAL_OBJS))
+	@true
 
 # Build Test Objects File
 $(TORC_TEST_OBJS_FILE): $(TORC_TEST_OBJS) $(TORC_DEPS)
-	@echo $(TORC_TEST_OBJS) > $(TORC_TEST_OBJS_FILE)
+	$(file > $(TORC_TEST_OBJS_FILE),$(TORC_TEST_OBJS))
+	@true
 
 # make the test executable
 $(TEST_EXEC): $(TORC_REAL_OBJS_FILE) $(TORC_TEST_OBJS_FILE)
