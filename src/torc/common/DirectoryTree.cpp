@@ -40,6 +40,7 @@ namespace common {
 	DirectoryTree::DirectoryTree(const char* argv0) {
 		// resolve symbolic links for the executable if necessary
 		boost::filesystem::path argvPath(argv0);
+#ifdef _POSIX_VERSION
 		char buffer[FILENAME_MAX];
 		ssize_t count = readlink(argv0, buffer, sizeof(buffer));
 		if(count != -1) {
@@ -48,6 +49,7 @@ namespace common {
 			//std::cout << "Resolving symbolic link " << argv[0] << " to executable name " << path 
 			//	<< std::endl;
 		}
+#endif
 		//std::cout << ">>>> argvPath: " << argvPath << std::endl;
 		// get the working directory and the relative executable path
 		sWorkingPath = boost::filesystem::initial_path();
