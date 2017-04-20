@@ -276,7 +276,7 @@ namespace physical {
 					// Get an end iterator to net sources
 					InstancePinSharedPtrIterator designNetSourcesEnd = designNetPtr->sourcesEnd();
 					// Wire index used when creating ports
-					u_int32_t portIndex = 0;
+					uint32_t portIndex = 0;
 
 					// Iterate over all net sources
 					while(designNetSourcesIter != designNetSourcesEnd) {
@@ -843,7 +843,7 @@ namespace physical {
 			string sanitizedPinName;
 
 			// Iterate over all characters in inString
-			for(u_int32_t i = 0; i < inPinName.length(); i++) {
+			for(uint32_t i = 0; i < inPinName.length(); i++) {
 
 				// Match character against valid characters
 				if(boost::regex_match(inPinName.substr(i, 1), sValidPinNameCharactersRegEx)) {

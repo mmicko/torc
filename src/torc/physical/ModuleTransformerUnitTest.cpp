@@ -198,7 +198,7 @@ void postModularizationVerifications(DesignSharedPtr inDesignPtr,
 
 	// Begin verify module port count and inter net routing
 	// Initialize port count
-	u_int32_t portCount = 0;
+	uint32_t portCount = 0;
 	// Search design for sModuleInstanceName
 	instIter = inDesignPtr->findInstance(sModuleInstanceName);
 	// Get a pointer to the module instance
