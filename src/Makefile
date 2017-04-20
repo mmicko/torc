@@ -19,7 +19,6 @@ TORC_DIR ?= $(shell pwd)/$(SRC_DIR)/torc
 include $(TORC_DIR)/Makefile.objects
 
 LDFLAGS = \
-	-m64 \
 	-L/usr/local/lib \
 	$(CPLEX_CCLNFLAGS) \
 	-dead_strip \
