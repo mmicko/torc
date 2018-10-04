@@ -1,0 +1,7 @@
+# define these variables here if necessary or define them as environment variables
+BOOST_INCLUDE_DIR = /usr/include/boost
+BOOST_LIB_DIR = /usr/lib
+# optionally define compiler to use
+#CC = 
+# internal variable definitions
+TORC_1_0_ENABLE_VERILOG = 0
